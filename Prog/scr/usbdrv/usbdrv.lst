@@ -1,0 +1,797 @@
+   1               		.file	"usbdrv.c"
+   2               		.arch atmega16
+   3               	__SREG__ = 0x3f
+   4               	__SP_H__ = 0x3e
+   5               	__SP_L__ = 0x3d
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.global __do_copy_data
+   9               		.global __do_clear_bss
+  17               	.Ltext0:
+  18               	.global	usbInit
+  20               	usbInit:
+  21               	.LFB8:
+  22               	.LM1:
+  23               	/* prologue: frame size=0 */
+  24               	/* prologue end (size=0) */
+  25               	.LM2:
+  26 0000 85B7      		in r24,85-0x20
+  27 0002 8360      		ori r24,lo8(3)
+  28 0004 85BF      		out 85-0x20,r24
+  29               	.LM3:
+  30 0006 8BB7      		in r24,91-0x20
+  31 0008 8064      		ori r24,lo8(64)
+  32 000a 8BBF      		out 91-0x20,r24
+  33               	.LM4:
+  34 000c 83EC      		ldi r24,lo8(-61)
+  35 000e 8093 0000 		sts usbTxBuf1,r24
+  36               	/* epilogue: frame size=0 */
+  37 0012 0895      		ret
+  38               	/* epilogue end (size=1) */
+  39               	/* function usbInit size 10 (9) */
+  40               	.LFE8:
+  42               	.global	usbPoll
+  44               	usbPoll:
+  45               	.LFB7:
+  46               	.LM5:
+  47               	/* prologue: frame size=0 */
+  48 0014 0F93      		push r16
+  49 0016 1F93      		push r17
+  50 0018 CF93      		push r28
+  51 001a DF93      		push r29
+  52               	/* prologue end (size=4) */
+  53               	.LM6:
+  54 001c 6091 0000 		lds r22,usbRxLen
+  55               	.LVL0:
+  56 0020 1616      		cp __zero_reg__,r22
+  57 0022 04F0      		brlt .+2
+  58 0024 00C0      		rjmp .L4
+  59               	.LM7:
+  60 0026 6350      		subi r22,lo8(-(-3))
+  61               	.LVL1:
+  62 0028 8091 0000 		lds r24,usbInputBufOffset
+  63 002c C0E0      		ldi r28,lo8(usbRxBuf+12)
+  64 002e D0E0      		ldi r29,hi8(usbRxBuf+12)
+  65               	.LVL2:
+  66 0030 C81B      		sub r28,r24
+  67 0032 D109      		sbc r29,__zero_reg__
+  68               	.LBB16:
+  69               	.LBB17:
+  70               	.LM8:
+  71 0034 8091 0000 		lds r24,usbRxToken
+  72 0038 8D32      		cpi r24,lo8(45)
+  73 003a 01F0      		breq .+2
+  74 003c 00C0      		rjmp .L6
+  75               	.LM9:
+  76 003e 8AE5      		ldi r24,lo8(90)
+  77 0040 8093 0000 		sts usbTxLen,r24
+  78               	.LM10:
+  79 0044 6830      		cpi r22,lo8(8)
+  80 0046 01F0      		breq .+2
+  81 0048 00C0      		rjmp .L8
+  82               	.LBB18:
+  83               	.LM11:
+  84 004a 9881      		ld r25,Y
+  85               	.LM12:
+  86 004c 892F      		mov r24,r25
+  87 004e 8076      		andi r24,lo8(96)
+  88 0050 01F0      		breq .+2
+  89 0052 00C0      		rjmp .L10
+  90               	.LBB19:
+  91               	.LM13:
+  92 0054 20E0      		ldi r18,lo8(usbTxBuf+9)
+  93 0056 30E0      		ldi r19,hi8(usbTxBuf+9)
+  94 0058 1092 0000 		sts usbTxBuf+9,__zero_reg__
+  95               	.LM14:
+  96 005c 8981      		ldd r24,Y+1
+  97 005e 8823      		tst r24
+  98 0060 01F4      		brne .L12
+  99               	.LBB20:
+ 100               	.LM15:
+ 101 0062 9F71      		andi r25,lo8(31)
+ 102 0064 01F4      		brne .L14
+ 103               	.LM16:
+ 104 0066 81E0      		ldi r24,lo8(1)
+ 105 0068 8093 0000 		sts usbTxBuf+9,r24
+ 106               	.L14:
+ 107               	.LM17:
+ 108 006c 1092 0000 		sts usbTxBuf+10,__zero_reg__
+ 109               	.LM18:
+ 110 0070 3093 0000 		sts (usbMsgPtr)+1,r19
+ 111 0074 2093 0000 		sts usbMsgPtr,r18
+ 112 0078 92E0      		ldi r25,lo8(2)
+ 113               	.LVL3:
+ 114 007a 00C0      		rjmp .L46
+ 115               	.LVL4:
+ 116               	.L12:
+ 117               	.LBE20:
+ 118               	.LM19:
+ 119 007c 8530      		cpi r24,lo8(5)
+ 120 007e 01F4      		brne .L17
+ 121               	.LM20:
+ 122 0080 8A81      		ldd r24,Y+2
+ 123 0082 8093 0000 		sts usbNewDeviceAddr,r24
+ 124 0086 00C0      		rjmp .L44
+ 125               	.L17:
+ 126               	.LM21:
+ 127 0088 8630      		cpi r24,lo8(6)
+ 128 008a 01F0      		breq .+2
+ 129 008c 00C0      		rjmp .L19
+ 130               	.LM22:
+ 131 008e 8B81      		ldd r24,Y+3
+ 132 0090 8130      		cpi r24,lo8(1)
+ 133 0092 01F4      		brne .L21
+ 134               	.LM23:
+ 135 0094 80E0      		ldi r24,lo8(usbDescriptorDevice)
+ 136 0096 90E0      		ldi r25,hi8(usbDescriptorDevice)
+ 137               	.LVL5:
+ 138 0098 9093 0000 		sts (usbMsgPtr)+1,r25
+ 139 009c 8093 0000 		sts usbMsgPtr,r24
+ 140 00a0 92E1      		ldi r25,lo8(18)
+ 141               	.LVL6:
+ 142 00a2 00C0      		rjmp .L83
+ 143               	.LVL7:
+ 144               	.L21:
+ 145               	.LM24:
+ 146 00a4 8230      		cpi r24,lo8(2)
+ 147 00a6 01F4      		brne .L23
+ 148               	.LM25:
+ 149 00a8 80E0      		ldi r24,lo8(usbDescriptorConfiguration)
+ 150 00aa 90E0      		ldi r25,hi8(usbDescriptorConfiguration)
+ 151               	.LVL8:
+ 152 00ac 9093 0000 		sts (usbMsgPtr)+1,r25
+ 153 00b0 8093 0000 		sts usbMsgPtr,r24
+ 154 00b4 92E2      		ldi r25,lo8(34)
+ 155               	.LVL9:
+ 156 00b6 00C0      		rjmp .L83
+ 157               	.LVL10:
+ 158               	.L23:
+ 159               	.LM26:
+ 160 00b8 8330      		cpi r24,lo8(3)
+ 161 00ba 01F4      		brne .L25
+ 162               	.LM27:
+ 163 00bc 8A81      		ldd r24,Y+2
+ 164 00be 8823      		tst r24
+ 165 00c0 01F4      		brne .L27
+ 166               	.LM28:
+ 167 00c2 80E0      		ldi r24,lo8(usbDescriptorString0)
+ 168 00c4 90E0      		ldi r25,hi8(usbDescriptorString0)
+ 169               	.LVL11:
+ 170 00c6 9093 0000 		sts (usbMsgPtr)+1,r25
+ 171 00ca 8093 0000 		sts usbMsgPtr,r24
+ 172 00ce 94E0      		ldi r25,lo8(4)
+ 173               	.LVL12:
+ 174 00d0 00C0      		rjmp .L83
+ 175               	.LVL13:
+ 176               	.L27:
+ 177               	.LM29:
+ 178 00d2 8130      		cpi r24,lo8(1)
+ 179 00d4 01F4      		brne .L29
+ 180               	.LM30:
+ 181 00d6 80E0      		ldi r24,lo8(usbDescriptorStringVendor)
+ 182 00d8 90E0      		ldi r25,hi8(usbDescriptorStringVendor)
+ 183               	.LVL14:
+ 184 00da 9093 0000 		sts (usbMsgPtr)+1,r25
+ 185 00de 8093 0000 		sts usbMsgPtr,r24
+ 186 00e2 92E4      		ldi r25,lo8(66)
+ 187               	.LVL15:
+ 188 00e4 00C0      		rjmp .L83
+ 189               	.LVL16:
+ 190               	.L29:
+ 191               	.LM31:
+ 192 00e6 8230      		cpi r24,lo8(2)
+ 193 00e8 01F4      		brne .L31
+ 194               	.LM32:
+ 195 00ea 80E0      		ldi r24,lo8(usbDescriptorStringDevice)
+ 196 00ec 90E0      		ldi r25,hi8(usbDescriptorStringDevice)
+ 197               	.LVL17:
+ 198 00ee 9093 0000 		sts (usbMsgPtr)+1,r25
+ 199 00f2 8093 0000 		sts usbMsgPtr,r24
+ 200 00f6 9AE2      		ldi r25,lo8(42)
+ 201               	.LVL18:
+ 202 00f8 00C0      		rjmp .L83
+ 203               	.LVL19:
+ 204               	.L31:
+ 205               	.LM33:
+ 206 00fa 8330      		cpi r24,lo8(3)
+ 207 00fc 01F0      		breq .+2
+ 208 00fe 00C0      		rjmp .L33
+ 209               	.LM34:
+ 210 0100 80E0      		ldi r24,lo8(usbDescriptorStringSerialNumber)
+ 211 0102 90E0      		ldi r25,hi8(usbDescriptorStringSerialNumber)
+ 212               	.LVL20:
+ 213 0104 9093 0000 		sts (usbMsgPtr)+1,r25
+ 214 0108 8093 0000 		sts usbMsgPtr,r24
+ 215 010c 96E0      		ldi r25,lo8(6)
+ 216               	.LVL21:
+ 217 010e 00C0      		rjmp .L83
+ 218               	.LVL22:
+ 219               	.L25:
+ 220               	.LM35:
+ 221 0110 8132      		cpi r24,lo8(33)
+ 222 0112 01F4      		brne .L35
+ 223               	.LM36:
+ 224 0114 80E0      		ldi r24,lo8(usbDescriptorConfiguration+18)
+ 225 0116 90E0      		ldi r25,hi8(usbDescriptorConfiguration+18)
+ 226               	.LVL23:
+ 227 0118 9093 0000 		sts (usbMsgPtr)+1,r25
+ 228 011c 8093 0000 		sts usbMsgPtr,r24
+ 229 0120 99E0      		ldi r25,lo8(9)
+ 230               	.LVL24:
+ 231 0122 00C0      		rjmp .L83
+ 232               	.LVL25:
+ 233               	.L35:
+ 234               	.LM37:
+ 235 0124 8232      		cpi r24,lo8(34)
+ 236 0126 01F0      		breq .+2
+ 237 0128 00C0      		rjmp .L33
+ 238               	.LM38:
+ 239 012a 80E0      		ldi r24,lo8(usbDescriptorHidReport)
+ 240 012c 90E0      		ldi r25,hi8(usbDescriptorHidReport)
+ 241               	.LVL26:
+ 242 012e 9093 0000 		sts (usbMsgPtr)+1,r25
+ 243 0132 8093 0000 		sts usbMsgPtr,r24
+ 244 0136 99E6      		ldi r25,lo8(105)
+ 245               	.LVL27:
+ 246 0138 00C0      		rjmp .L83
+ 247               	.LVL28:
+ 248               	.L19:
+ 249               	.LM39:
+ 250 013a 8830      		cpi r24,lo8(8)
+ 251 013c 01F4      		brne .L38
+ 252               	.LM40:
+ 253 013e 80E0      		ldi r24,lo8(usbConfiguration)
+ 254 0140 90E0      		ldi r25,hi8(usbConfiguration)
+ 255 0142 9093 0000 		sts (usbMsgPtr)+1,r25
+ 256 0146 8093 0000 		sts usbMsgPtr,r24
+ 257 014a 00C0      		rjmp .L86
+ 258               	.L38:
+ 259               	.LM41:
+ 260 014c 8930      		cpi r24,lo8(9)
+ 261 014e 01F4      		brne .L40
+ 262               	.LM42:
+ 263 0150 8A81      		ldd r24,Y+2
+ 264 0152 8093 0000 		sts usbConfiguration,r24
+ 265 0156 00C0      		rjmp .L44
+ 266               	.L40:
+ 267               	.LM43:
+ 268 0158 8A30      		cpi r24,lo8(10)
+ 269 015a 01F4      		brne .L42
+ 270               	.LM44:
+ 271 015c 3093 0000 		sts (usbMsgPtr)+1,r19
+ 272 0160 2093 0000 		sts usbMsgPtr,r18
+ 273               	.L86:
+ 274 0164 91E0      		ldi r25,lo8(1)
+ 275               	.LVL29:
+ 276 0166 00C0      		rjmp .L46
+ 277               	.LVL30:
+ 278               	.L42:
+ 279               	.LM45:
+ 280 0168 8B30      		cpi r24,lo8(11)
+ 281 016a 01F0      		breq .+2
+ 282 016c 00C0      		rjmp .L44
+ 283               	.LM46:
+ 284 016e 83EC      		ldi r24,lo8(-61)
+ 285 0170 8093 0000 		sts usbTxBuf1,r24
+ 286 0174 00C0      		rjmp .L44
+ 287               	.L10:
+ 288               	.LBE19:
+ 289               	.LBE18:
+ 290               	.LBE17:
+ 291               	.LM47:
+ 292 0176 CE01      		movw r24,r28
+ 293 0178 0E94 0000 		call usbFunctionSetup
+ 294               	.LVL31:
+ 295 017c 982F      		mov r25,r24
+ 296               	.LVL32:
+ 297               	.LBB21:
+ 298               	.LBB22:
+ 299               	.LM48:
+ 300 017e 8F3F      		cpi r24,lo8(-1)
+ 301 0180 01F4      		brne .L46
+ 302               	.LVL33:
+ 303               	.LM49:
+ 304 0182 8881      		ld r24,Y
+ 305               	.LVL34:
+ 306 0184 87FF      		sbrs r24,7
+ 307 0186 00C0      		rjmp .L84
+ 308               	.LM50:
+ 309 0188 9E81      		ldd r25,Y+6
+ 310 018a 00C0      		rjmp .L84
+ 311               	.LVL35:
+ 312               	.L46:
+ 313 018c 20E8      		ldi r18,lo8(-128)
+ 314               	.LVL36:
+ 315               	.L16:
+ 316               	.LM51:
+ 317 018e 8F81      		ldd r24,Y+7
+ 318               	.LVL37:
+ 319 0190 8823      		tst r24
+ 320 0192 01F4      		brne .L50
+ 321 0194 8E81      		ldd r24,Y+6
+ 322               	.LVL38:
+ 323 0196 8917      		cp r24,r25
+ 324 0198 00F4      		brsh .L50
+ 325 019a 982F      		mov r25,r24
+ 326 019c 00C0      		rjmp .L50
+ 327               	.LVL39:
+ 328               	.L6:
+ 329               	.LBE22:
+ 330               	.LM52:
+ 331 019e 8091 0000 		lds r24,usbMsgFlags
+ 332 01a2 87FD      		sbrc r24,7
+ 333 01a4 00C0      		rjmp .L8
+ 334               	.LBE21:
+ 335               	.LM53:
+ 336 01a6 CE01      		movw r24,r28
+ 337 01a8 0E94 0000 		call usbFunctionWrite
+ 338               	.LVL40:
+ 339               	.LVL41:
+ 340               	.LBB23:
+ 341               	.LBB24:
+ 342               	.LM54:
+ 343 01ac 8F3F      		cpi r24,lo8(-1)
+ 344 01ae 01F4      		brne .L54
+ 345               	.LM55:
+ 346 01b0 8093 0000 		sts usbMsgLen,r24
+ 347               	.LM56:
+ 348 01b4 8EE1      		ldi r24,lo8(30)
+ 349               	.LVL42:
+ 350 01b6 8093 0000 		sts usbTxLen,r24
+ 351               	.LVL43:
+ 352               	.L87:
+ 353 01ba 9FEF      		ldi r25,lo8(-1)
+ 354               	.LVL44:
+ 355               	.L84:
+ 356 01bc 20E0      		ldi r18,lo8(0)
+ 357               	.LVL45:
+ 358 01be 00C0      		rjmp .L50
+ 359               	.LVL46:
+ 360               	.L54:
+ 361               	.LM57:
+ 362 01c0 8823      		tst r24
+ 363 01c2 01F0      		breq .L87
+ 364 01c4 90E0      		ldi r25,lo8(0)
+ 365               	.LVL47:
+ 366 01c6 00C0      		rjmp .L84
+ 367               	.LVL48:
+ 368               	.L8:
+ 369 01c8 90E0      		ldi r25,lo8(0)
+ 370               	.LVL49:
+ 371 01ca 20E8      		ldi r18,lo8(-128)
+ 372               	.LVL50:
+ 373               	.L50:
+ 374               	.LBE24:
+ 375               	.LM58:
+ 376 01cc 2093 0000 		sts usbMsgFlags,r18
+ 377               	.LM59:
+ 378 01d0 9093 0000 		sts usbMsgLen,r25
+ 379               	.LBE23:
+ 380               	.LBE16:
+ 381               	.LM60:
+ 382 01d4 1092 0000 		sts usbRxLen,__zero_reg__
+ 383               	.LVL51:
+ 384               	.L4:
+ 385               	.LM61:
+ 386 01d8 8091 0000 		lds r24,usbTxLen
+ 387               	.LVL52:
+ 388 01dc 84FF      		sbrs r24,4
+ 389 01de 00C0      		rjmp .L58
+ 390               	.LM62:
+ 391 01e0 8091 0000 		lds r24,usbMsgLen
+ 392 01e4 8F3F      		cpi r24,lo8(-1)
+ 393 01e6 01F4      		brne .+2
+ 394 01e8 00C0      		rjmp .L58
+ 395 01ea 682F      		mov r22,r24
+ 396               	.LVL53:
+ 397 01ec 8930      		cpi r24,lo8(9)
+ 398 01ee 00F0      		brlo .L61
+ 399               	.LVL54:
+ 400 01f0 68E0      		ldi r22,lo8(8)
+ 401               	.L61:
+ 402               	.LVL55:
+ 403               	.LBB25:
+ 404               	.LBB26:
+ 405               	.LM63:
+ 406 01f2 861B      		sub r24,r22
+ 407 01f4 8093 0000 		sts usbMsgLen,r24
+ 408               	.LM64:
+ 409 01f8 8091 0000 		lds r24,usbMsgFlags
+ 410               	.LBE26:
+ 411 01fc 80FF      		sbrs r24,0
+ 412 01fe 00C0      		rjmp .L62
+ 413 0200 03EC      		ldi r16,lo8(-61)
+ 414               	.LVL56:
+ 415 0202 00C0      		rjmp .L64
+ 416               	.LVL57:
+ 417               	.L62:
+ 418 0204 0BE4      		ldi r16,lo8(75)
+ 419               	.LVL58:
+ 420               	.L64:
+ 421               	.LBB27:
+ 422               	.LM65:
+ 423 0206 8F5F      		subi r24,lo8(-(1))
+ 424 0208 8093 0000 		sts usbMsgFlags,r24
+ 425               	.LBB28:
+ 426               	.LBB29:
+ 427               	.LM66:
+ 428 020c 2091 0000 		lds r18,usbMsgPtr
+ 429 0210 3091 0000 		lds r19,(usbMsgPtr)+1
+ 430               	.LVL59:
+ 431               	.LM67:
+ 432 0214 86FD      		sbrc r24,6
+ 433 0216 00C0      		rjmp .L65
+ 434 0218 962F      		mov r25,r22
+ 435               	.LVL60:
+ 436 021a F901      		movw r30,r18
+ 437               	.LVL61:
+ 438 021c A0E0      		ldi r26,lo8(usbTxBuf+1)
+ 439 021e B0E0      		ldi r27,hi8(usbTxBuf+1)
+ 440               	.LVL62:
+ 441 0220 00C0      		rjmp .L67
+ 442               	.LVL63:
+ 443               	.L65:
+ 444 0222 962F      		mov r25,r22
+ 445               	.LVL64:
+ 446 0224 F901      		movw r30,r18
+ 447               	.LVL65:
+ 448 0226 A0E0      		ldi r26,lo8(usbTxBuf+1)
+ 449 0228 B0E0      		ldi r27,hi8(usbTxBuf+1)
+ 450               	.LVL66:
+ 451 022a 00C0      		rjmp .L68
+ 452               	.LVL67:
+ 453               	.L69:
+ 454               	.LBB30:
+ 455               	.LBB31:
+ 456               	.LM68:
+ 457               	/* #APP */
+ 458 022c 8491      		lpm r24, Z
+ 459               		
+ 460               	/* #NOAPP */
+ 461               	.LBE31:
+ 462               	.LM69:
+ 463 022e 8D93      		st X+,r24
+ 464               	.LM70:
+ 465 0230 3196      		adiw r30,1
+ 466               	.L68:
+ 467               	.LBE30:
+ 468               	.LM71:
+ 469 0232 9150      		subi r25,1
+ 470 0234 00F4      		brcc .L69
+ 471 0236 00C0      		rjmp .L85
+ 472               	.LVL68:
+ 473               	.L72:
+ 474               	.LM72:
+ 475 0238 8191      		ld r24,Z+
+ 476 023a 8D93      		st X+,r24
+ 477               	.L67:
+ 478               	.LM73:
+ 479 023c 9150      		subi r25,1
+ 480 023e 00F4      		brcc .L72
+ 481               	.LVL69:
+ 482               	.L85:
+ 483 0240 C901      		movw r24,r18
+ 484               	.LVL70:
+ 485 0242 860F      		add r24,r22
+ 486 0244 911D      		adc r25,__zero_reg__
+ 487               	.LM74:
+ 488 0246 9093 0000 		sts (usbMsgPtr)+1,r25
+ 489 024a 8093 0000 		sts usbMsgPtr,r24
+ 490               	.LBE29:
+ 491               	.LBE28:
+ 492               	.LM75:
+ 493 024e 7727      		clr r23
+ 494 0250 162F      		mov r17,r22
+ 495               	.LVL71:
+ 496               	.LM76:
+ 497 0252 80E0      		ldi r24,lo8(usbTxBuf+1)
+ 498 0254 90E0      		ldi r25,hi8(usbTxBuf+1)
+ 499               	.LVL72:
+ 500 0256 0E94 0000 		call usbCrc16Append
+ 501               	.LVL73:
+ 502               	.LM77:
+ 503 025a 1830      		cpi r17,lo8(8)
+ 504 025c 00F4      		brsh .L74
+ 505               	.LM78:
+ 506 025e 8FEF      		ldi r24,lo8(-1)
+ 507 0260 8093 0000 		sts usbMsgLen,r24
+ 508               	.L74:
+ 509               	.LM79:
+ 510 0264 0093 0000 		sts usbTxBuf,r16
+ 511               	.LM80:
+ 512 0268 1C5F      		subi r17,lo8(-(4))
+ 513               	.LM81:
+ 514 026a 1093 0000 		sts usbTxLen,r17
+ 515               	.LVL74:
+ 516               	.L58:
+ 517 026e 9AE0      		ldi r25,lo8(10)
+ 518               	.LVL75:
+ 519               	.L76:
+ 520               	.LBE27:
+ 521               	.LBE25:
+ 522               	.LBB32:
+ 523               	.LBB33:
+ 524               	.LM82:
+ 525 0270 80B3      		in r24,48-0x20
+ 526               	.LBE33:
+ 527               	.LBE32:
+ 528               	.LM83:
+ 529 0272 8570      		andi r24,lo8(5)
+ 530 0274 01F4      		brne .L80
+ 531               	.LM84:
+ 532 0276 9150      		subi r25,lo8(-(-1))
+ 533 0278 01F4      		brne .L76
+ 534               	.LM85:
+ 535 027a 1092 0000 		sts usbNewDeviceAddr,__zero_reg__
+ 536               	.LM86:
+ 537 027e 1092 0000 		sts usbDeviceAddr,__zero_reg__
+ 538 0282 00C0      		rjmp .L80
+ 539               	.LVL76:
+ 540               	.L44:
+ 541               	.LM87:
+ 542 0284 90E0      		ldi r25,lo8(0)
+ 543               	.LVL77:
+ 544 0286 00C0      		rjmp .L46
+ 545               	.LVL78:
+ 546               	.L33:
+ 547 0288 90E0      		ldi r25,lo8(0)
+ 548               	.LVL79:
+ 549               	.L83:
+ 550 028a 20EC      		ldi r18,lo8(-64)
+ 551               	.LVL80:
+ 552 028c 00C0      		rjmp .L16
+ 553               	.LVL81:
+ 554               	.L80:
+ 555               	/* epilogue: frame size=0 */
+ 556 028e DF91      		pop r29
+ 557 0290 CF91      		pop r28
+ 558 0292 1F91      		pop r17
+ 559 0294 0F91      		pop r16
+ 560 0296 0895      		ret
+ 561               	/* epilogue end (size=5) */
+ 562               	/* function usbPoll size 331 (322) */
+ 563               	.LFE7:
+ 565               	.global	usbSetInterrupt
+ 567               	usbSetInterrupt:
+ 568               	.LFB2:
+ 569               	.LM88:
+ 570               	/* prologue: frame size=0 */
+ 571 0298 1F93      		push r17
+ 572               	/* prologue end (size=1) */
+ 573               	.LVL82:
+ 574 029a DC01      		movw r26,r24
+ 575 029c 162F      		mov r17,r22
+ 576               	.LM89:
+ 577 029e 8091 0000 		lds r24,usbTxLen1
+ 578               	.LVL83:
+ 579 02a2 84FF      		sbrs r24,4
+ 580 02a4 00C0      		rjmp .L89
+ 581               	.LVL84:
+ 582               	.LM90:
+ 583 02a6 8091 0000 		lds r24,usbTxBuf1
+ 584 02aa 98E8      		ldi r25,lo8(-120)
+ 585 02ac 8927      		eor r24,r25
+ 586 02ae 8093 0000 		sts usbTxBuf1,r24
+ 587 02b2 00C0      		rjmp .L91
+ 588               	.L89:
+ 589               	.LM91:
+ 590 02b4 8AE5      		ldi r24,lo8(90)
+ 591 02b6 8093 0000 		sts usbTxLen1,r24
+ 592               	.L91:
+ 593 02ba 912F      		mov r25,r17
+ 594               	.LVL85:
+ 595 02bc E0E0      		ldi r30,lo8(usbTxBuf1+1)
+ 596 02be F0E0      		ldi r31,hi8(usbTxBuf1+1)
+ 597               	.LVL86:
+ 598 02c0 00C0      		rjmp .L92
+ 599               	.L93:
+ 600               	.LM92:
+ 601 02c2 8D91      		ld r24,X+
+ 602 02c4 8193      		st Z+,r24
+ 603               	.L92:
+ 604               	.LM93:
+ 605 02c6 9150      		subi r25,1
+ 606 02c8 00F4      		brcc .L93
+ 607               	.LM94:
+ 608 02ca 612F      		mov r22,r17
+ 609 02cc 80E0      		ldi r24,lo8(usbTxBuf1+1)
+ 610 02ce 90E0      		ldi r25,hi8(usbTxBuf1+1)
+ 611 02d0 0E94 0000 		call usbCrc16Append
+ 612               	.LVL87:
+ 613               	.LM95:
+ 614 02d4 1C5F      		subi r17,lo8(-(4))
+ 615 02d6 1093 0000 		sts usbTxLen1,r17
+ 616               	/* epilogue: frame size=0 */
+ 617 02da 1F91      		pop r17
+ 618 02dc 0895      		ret
+ 619               	/* epilogue end (size=2) */
+ 620               	/* function usbSetInterrupt size 36 (33) */
+ 621               	.LFE2:
+ 623               	.global	usbMsgLen
+ 624               		.data
+ 627               	usbMsgLen:
+ 628 0000 FF        		.byte	-1
+ 629               	.global	usbTxLen
+ 632               	usbTxLen:
+ 633 0001 5A        		.byte	90
+ 634               	.global	usbTxLen1
+ 637               	usbTxLen1:
+ 638 0002 5A        		.byte	90
+ 639               	.global	usbDescriptorString0
+ 640               		.section	.progmem.data,"a",@progbits
+ 643               	usbDescriptorString0:
+ 644 0000 04        		.byte	4
+ 645 0001 03        		.byte	3
+ 646 0002 09        		.byte	9
+ 647 0003 04        		.byte	4
+ 648               	.global	usbDescriptorStringVendor
+ 651               	usbDescriptorStringVendor:
+ 652 0004 4203      		.word	834
+ 653 0006 5300      		.word	83
+ 654 0008 7000      		.word	112
+ 655 000a 6100      		.word	97
+ 656 000c 6300      		.word	99
+ 657 000e 6500      		.word	101
+ 658 0010 6D00      		.word	109
+ 659 0012 6100      		.word	97
+ 660 0014 6E00      		.word	110
+ 661 0016 2000      		.word	32
+ 662 0018 5300      		.word	83
+ 663 001a 7000      		.word	112
+ 664 001c 6900      		.word	105
+ 665 001e 6600      		.word	102
+ 666 0020 6600      		.word	102
+ 667 0022 2000      		.word	32
+ 668 0024 6800      		.word	104
+ 669 0026 7400      		.word	116
+ 670 0028 7400      		.word	116
+ 671 002a 7000      		.word	112
+ 672 002c 3A00      		.word	58
+ 673 002e 2F00      		.word	47
+ 674 0030 2F00      		.word	47
+ 675 0032 7300      		.word	115
+ 676 0034 7900      		.word	121
+ 677 0036 6D00      		.word	109
+ 678 0038 6C00      		.word	108
+ 679 003a 6900      		.word	105
+ 680 003c 6E00      		.word	110
+ 681 003e 6B00      		.word	107
+ 682 0040 2E00      		.word	46
+ 683 0042 6400      		.word	100
+ 684 0044 6B00      		.word	107
+ 685               	.global	usbDescriptorStringDevice
+ 688               	usbDescriptorStringDevice:
+ 689 0046 2A03      		.word	810
+ 690 0048 5300      		.word	83
+ 691 004a 7000      		.word	112
+ 692 004c 6900      		.word	105
+ 693 004e 6600      		.word	102
+ 694 0050 6600      		.word	102
+ 695 0052 2700      		.word	39
+ 696 0054 7300      		.word	115
+ 697 0056 2000      		.word	32
+ 698 0058 4300      		.word	67
+ 699 005a 3600      		.word	54
+ 700 005c 3400      		.word	52
+ 701 005e 2000      		.word	32
+ 702 0060 4B00      		.word	75
+ 703 0062 6500      		.word	101
+ 704 0064 7900      		.word	121
+ 705 0066 6200      		.word	98
+ 706 0068 6F00      		.word	111
+ 707 006a 6100      		.word	97
+ 708 006c 7200      		.word	114
+ 709 006e 6400      		.word	100
+ 710               	.global	usbDescriptorStringSerialNumber
+ 713               	usbDescriptorStringSerialNumber:
+ 714 0070 0603      		.word	774
+ 715 0072 3400      		.word	52
+ 716 0074 3200      		.word	50
+ 717               	.global	usbDescriptorDevice
+ 720               	usbDescriptorDevice:
+ 721 0076 12        		.byte	18
+ 722 0077 01        		.byte	1
+ 723 0078 01        		.byte	1
+ 724 0079 01        		.byte	1
+ 725 007a 00        		.byte	0
+ 726 007b 00        		.byte	0
+ 727 007c 00        		.byte	0
+ 728 007d 08        		.byte	8
+ 729 007e 42        		.byte	66
+ 730 007f 42        		.byte	66
+ 731 0080 AD        		.byte	-83
+ 732 0081 DE        		.byte	-34
+ 733 0082 98        		.byte	-104
+ 734 0083 01        		.byte	1
+ 735 0084 01        		.byte	1
+ 736 0085 02        		.byte	2
+ 737 0086 03        		.byte	3
+ 738 0087 01        		.byte	1
+ 739               	.global	usbDescriptorConfiguration
+ 742               	usbDescriptorConfiguration:
+ 743 0088 09        		.byte	9
+ 744 0089 02        		.byte	2
+ 745 008a 22        		.byte	34
+ 746 008b 00        		.byte	0
+ 747 008c 01        		.byte	1
+ 748 008d 01        		.byte	1
+ 749 008e 00        		.byte	0
+ 750 008f 40        		.byte	64
+ 751 0090 32        		.byte	50
+ 752 0091 09        		.byte	9
+ 753 0092 04        		.byte	4
+ 754 0093 00        		.byte	0
+ 755 0094 00        		.byte	0
+ 756 0095 01        		.byte	1
+ 757 0096 03        		.byte	3
+ 758 0097 00        		.byte	0
+ 759 0098 00        		.byte	0
+ 760 0099 00        		.byte	0
+ 761 009a 09        		.byte	9
+ 762 009b 21        		.byte	33
+ 763 009c 01        		.byte	1
+ 764 009d 01        		.byte	1
+ 765 009e 00        		.byte	0
+ 766 009f 01        		.byte	1
+ 767 00a0 22        		.byte	34
+ 768 00a1 69        		.byte	105
+ 769 00a2 00        		.byte	0
+ 770 00a3 07        		.byte	7
+ 771 00a4 05        		.byte	5
+ 772 00a5 81        		.byte	-127
+ 773 00a6 03        		.byte	3
+ 774 00a7 08        		.byte	8
+ 775 00a8 00        		.byte	0
+ 776 00a9 0A        		.byte	10
+ 777               		.lcomm usbMsgFlags,1
+ 778               		.comm usbMsgPtr,2,1
+ 779               		.comm usbConfiguration,1,1
+ 780               		.comm usbTxBuf1,11,1
+ 781               		.comm usbRxBuf,22,1
+ 782               		.comm usbInputBufOffset,1,1
+ 783               		.comm usbDeviceAddr,1,1
+ 784               		.comm usbNewDeviceAddr,1,1
+ 785               		.comm usbRxLen,1,1
+ 786               		.comm usbCurrentTok,1,1
+ 787               		.comm usbRxToken,1,1
+ 788               		.comm usbTxBuf,11,1
+ 829               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 usbdrv.c
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccB3ibHR.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccB3ibHR.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccB3ibHR.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccB3ibHR.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccB3ibHR.s:7      *ABS*:00000001 __zero_reg__
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccB3ibHR.s:20     .text:00000000 usbInit
+                            *COM*:0000000b usbTxBuf1
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccB3ibHR.s:44     .text:00000014 usbPoll
+                            *COM*:00000001 usbRxLen
+                            *COM*:00000001 usbInputBufOffset
+                            *COM*:00000016 usbRxBuf
+                            *COM*:00000001 usbRxToken
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccB3ibHR.s:632    .data:00000001 usbTxLen
+                            *COM*:0000000b usbTxBuf
+                            *COM*:00000002 usbMsgPtr
+                            *COM*:00000001 usbNewDeviceAddr
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccB3ibHR.s:720    .progmem.data:00000076 usbDescriptorDevice
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccB3ibHR.s:742    .progmem.data:00000088 usbDescriptorConfiguration
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccB3ibHR.s:643    .progmem.data:00000000 usbDescriptorString0
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccB3ibHR.s:651    .progmem.data:00000004 usbDescriptorStringVendor
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccB3ibHR.s:688    .progmem.data:00000046 usbDescriptorStringDevice
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccB3ibHR.s:713    .progmem.data:00000070 usbDescriptorStringSerialNumber
+                            *COM*:00000001 usbConfiguration
+                             .bss:00000000 usbMsgFlags
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccB3ibHR.s:627    .data:00000000 usbMsgLen
+                            *COM*:00000001 usbDeviceAddr
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccB3ibHR.s:567    .text:00000298 usbSetInterrupt
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccB3ibHR.s:637    .data:00000002 usbTxLen1
+                            *COM*:00000001 usbCurrentTok
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss
+usbDescriptorHidReport
+usbFunctionSetup
+usbFunctionWrite
+usbCrc16Append

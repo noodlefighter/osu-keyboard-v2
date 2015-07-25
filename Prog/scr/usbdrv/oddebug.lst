@@ -1,0 +1,22 @@
+   1               		.file	"oddebug.c"
+   2               		.arch atmega16
+   3               	__SREG__ = 0x3f
+   4               	__SP_H__ = 0x3e
+   5               	__SP_L__ = 0x3d
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.global __do_copy_data
+   9               		.global __do_clear_bss
+  17               	.Ltext0:
+  18               	.Letext0:
+DEFINED SYMBOLS
+                            *ABS*:00000000 oddebug.c
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccBVhGLa.s:3      *ABS*:0000003f __SREG__
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccBVhGLa.s:4      *ABS*:0000003e __SP_H__
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccBVhGLa.s:5      *ABS*:0000003d __SP_L__
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccBVhGLa.s:6      *ABS*:00000000 __tmp_reg__
+C:\DOCUME~1\spiff\LOCALS~1\Temp/ccBVhGLa.s:7      *ABS*:00000001 __zero_reg__
+
+UNDEFINED SYMBOLS
+__do_copy_data
+__do_clear_bss

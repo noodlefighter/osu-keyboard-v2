@@ -1,0 +1,23 @@
+Output: Gerber Files
+Type  : Gerber
+From  : Variant [[No Variations]] of Project [Free Documents]
+   Generated File[OSUpcb.GTL]
+   Generated File[OSUpcb.GBL]
+   Generated File[OSUpcb.GPB]
+   Generated File[OSUpcb.GPT]
+   Generated File[OSUpcb.GTO]
+   Generated File[OSUpcb.GTP]
+   Generated File[OSUpcb.GTS]
+   Generated File[OSUpcb.GBS]
+   Generated File[OSUpcb.GBP]
+   Generated File[OSUpcb.GBO]
+   Generated File[OSUpcb.GKO]
+   Generated File[OSUpcb.RUL]
+   Generated File[OSUpcb.EXTREP]
+   Generated File[OSUpcb.REP]
+
+
+Files Generated   : 14
+Documents Printed : 0
+
+Finished Output Generation At 21:06:33 On 2014/5/13
