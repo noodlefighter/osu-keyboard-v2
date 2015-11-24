@@ -93,31 +93,33 @@ void KeyScan(void) {
 
   	uint8_t   keyPort,i;
 	keyPort = PINC;
-
+	
 	for(i=0;i<KEYamount;i++){
-		switch(KeyScan_state[i]){
-			case 0:	//未按下
-				if(keyPressed(keyPort,i)){
-					//检测到按下
-					KeyScan_state[i]++;
-					KeyScan_keyChanged = 1;
-					speed_count();
-					lastPushKey = i;
-					if(i<=1)	//bt12的led模式相关设置 按下
-					{
-						if(Setup_key12LED == Setup_key12LED_OftenOn){
-							PWM_setOutputLevel_direct(i,0);							
-						}else if(Setup_key12LED == Setup_key12LED_OftenOff) {
-							PWM_setOutputLevel_direct(i,PWM_TotalLevel);							
-						}						
-					}
+		
+		if(KeyScan_state[i]==0){
+		//未按下
+			if(keyPressed(keyPort,i)){
+				//检测到按下
+				KeyScan_state[i]++;
+				KeyScan_keyChanged = 1;
+				speed_count();
+				lastPushKey = i;
+				if(i<=1)	//bt12的led模式相关设置 按下
+				{
+					if(Setup_key12LED == Setup_key12LED_OftenOn){
+						PWM_setOutputLevel_direct(i,0);							
+					}else if(Setup_key12LED == Setup_key12LED_OftenOff) {
+						PWM_setOutputLevel_direct(i,PWM_TotalLevel);							
+					}						
 				}
-				
-				break;
-			case 1:	//按下等待放开
-				if(!keyPressed(keyPort,i)){
-					//检测到放开
-					//成功放开！！
+			}
+		}
+		else if(KeyScan_state[i]>0 && KeyScan_state[i]<JITTER_TIMER){
+			//按下等待放开,放开状态要持续10ms才算成功放开(去抖)
+			if(!keyPressed(keyPort,i)){
+				KeyScan_state[i]++;	
+
+				if(KeyScan_state[i] >= JITTER_TIMER){
 					if(i<=1)	//bt12的led模式相关设置 放开
 					{
 						if(Setup_key12LED == Setup_key12LED_OftenOn){
@@ -130,31 +132,34 @@ void KeyScan(void) {
 					KeyScan_state[i] = 0;
 					KeyScan_keyChanged = 1;
 					keyPushTime[i] = 0;
+					continue;
 				}
-				else{
-					if(keyPushTime[i]<600){	//1.5秒算长按了 再加也没有意义了
-						keyPushTime[i]++;
-					}
-					if(keyPushTime[i]>500){
-						keyPushTime[i]=0;
-						if(i==2 && KeyScan_state[0] && KeyScan_state[1] && lastPushKey == 2){
-							//都按下了,最后按下的是按键2
-							//bt3编程
-							Setup_setLoop(Setup_Address_key3Mode,&Setup_key3Mode,Setup_key3Mode_max);
-							
-						}else if(i==0 && KeyScan_state[1] && KeyScan_state[2] && lastPushKey == 0){
-							//都按下了,最后按下的是按键0
-							Setup_setLoop(Setup_Address_key12Mode,&Setup_key12Mode,Setup_key12Mode_max);
-						}else if(i==1 && KeyScan_state[0] && KeyScan_state[2] && lastPushKey == 1){
-							//都按下了,最后按下的是按键1
-							Setup_setLoop(Setup_Address_bgColor,&Setup_bgColor,Setup_bgColor_max);
-						}
-					}
 
+			}
+			else{
+				//放开失败
+				KeyScan_state[i] = 1;				
+			}
+
+			if(keyPushTime[i]<600){	//1.5秒算长按了 再加也没有意义了
+				keyPushTime[i]++;
+			}
+
+			if(keyPushTime[i]>500){
+				keyPushTime[i]=0;
+				if(i==2 && KeyScan_state[0] && KeyScan_state[1] && lastPushKey == 2){
+					//都按下了,最后按下的是按键2
+					//bt3编程
+					Setup_setLoop(Setup_Address_key3Mode,&Setup_key3Mode,Setup_key3Mode_max);					
+				}else if(i==0 && KeyScan_state[1] && KeyScan_state[2] && lastPushKey == 0){
+					//都按下了,最后按下的是按键0
+					Setup_setLoop(Setup_Address_key12Mode,&Setup_key12Mode,Setup_key12Mode_max);
+				}else if(i==1 && KeyScan_state[0] && KeyScan_state[2] && lastPushKey == 1){
+					//都按下了,最后按下的是按键1
+					Setup_setLoop(Setup_Address_bgColor,&Setup_bgColor,Setup_bgColor_max);
 				}
-				break;
-
-				
+			}				
 		}
-	}
+
+	}//for's end
 }
