@@ -1,0 +1,26 @@
+---------------------------------------------------------------------------
+NCDrill File Report For: OSUpcb.PcbDoc   2020/9/24  23:07:35
+---------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII RoundHoles File : OSUpcb-RoundHoles.TXT
+ASCII SlotHoles File : OSUpcb-SlotHoles.TXT
+EIA File   : OSUpcb.DRL
+
+Tool         Hole Size           Hole Type     Hole Count Plated       Tool Travel
+---------------------------------------------------------------------------
+T1        15.75mil (0.40005mm)     Round          41               8.69 Inch (220.75 mm)
+T2        19.68mil (0.49987mm)     Round          5                0.70 Inch (17.84 mm)
+T3        23.62mil (0.59995mm)     Round          2                0.20 Inch (5.08 mm)
+T4        27.56mil (0.70002mm)     Round          5                0.25 Inch (6.24 mm)
+T5        31.5mil (0.8001mm)       Round          6                0.50 Inch (12.70 mm)
+T6        31.5mil (0.8001mm)       Slot           2                290.91 Inch (7389.10 mm)
+T7        35.43mil (0.89992mm)     Round          4                0.62 Inch (15.80 mm)
+T8        43.31mil (1.10007mm)     Round          16               3.49 Inch (88.65 mm)
+T9        70.87mil (1.8001mm)      Round          8                3.00 Inch (76.10 mm)
+T10       118.11mil (2.99999mm)    Round          4                5.22 Inch (132.50 mm)
+T11       161.42mil (4.10007mm)    Round          4                1.74 Inch (44.10 mm)
+---------------------------------------------------------------------------
+Totals                                            97               315.31 Inch (8008.85 mm)
+
+Total Processing Time (hh:mm:ss) : 00:00:00
